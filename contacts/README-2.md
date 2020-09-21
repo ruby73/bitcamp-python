@@ -1,57 +1,40 @@
-Object = 기능(function) + 속성(Property, Attribute, Feature) => 파라미터( AI 파트 )
-하나의 { ... } 에 같이 있음
-() 라운드 {} 컬 [] 스퀘어 브레이스는 총 3가지 (전 프로그래밍 공통)
-() 컨티션, 파라미터존, 튜플
-{} 블락, JSON, Dict(딕셔너리)
-[] array, 
-[[]] matrix
+클래스 하나가 단위 unit 이 됩니다. 
+이제 확장을 하겠습니다. 
+객체지향에서는 디자인패턴이라는 개념이 존재합니다.
+1994년 GoF 4인방 개발자 에릭 감마 ... 패턴 23개로 정의...
+이 분이 vscode 개발자입니다.
 
-===> notation 이라 합니다.
-===> 언어 기호학
+패턴조합을 통해 큰 개념의 패턴 -> MVC 패턴 이라고 합니다.
+model, view, controller 이렇게 조합합니다. -> Java, C 언어에서 주로 사용하는 개념.
 
-기본적으로 컴공 0, 1 만이 존재합니다. 이진수 binary code
+model : 데이터처리 -> API 서버 -> Python -> Tensorflow
+view : 화면UI 처리 -> UI 서버  -> ReactjS  
+controller : model + view 를 연결 ---> 네트워크 처리 -> Flask (app.py) -> RESTful 방식 
 
-위키 Geoge bool 이란 사람 검색...
-T, F 판단 1850년 --> 전선 (모스부호) --> 컴퓨터
+이 지점에서 팀내에서 나의 역할을 고민하시면 됩니다. 
+곧 취업시 자신을 어필할 수 있는 혹은 자신있는 혹은 흥미있는 카테고리를 결정하시는 것이 좋습니다. 
+Backend Tier (API 서버 구축담당 : JAVA, C, Python, SQL)
+Frontend Tier (UI 서버 구축담당 : Javascript, HTML, Reactjs)
 
-선택지는 항상 두가지 중에 하나를 선택하는 구조 -> 컴공 해법
+모델을 제작하고 뷰를 만들어서 컨트롤러로 연결한다. 이 컨셉을 이해하세요..
+프로토타입 입니다.
+독자적으로 움직이는  --> 모듈.
+5개의 모듈(개인이 작성)을 합쳤을 때, 조립이 잘 되면 1단계를 패스한다. 
 
-on, off 의 개념이다.
-요소가 존재, 비존재 로 종류가 나뉜다. => Decision Tree (Origin AI 알고리즘)
+캐글... 회원가입을 하세요. 
 
-Q. 객체지향 vs 함수형 프로그래밍 를 구분하는 기준은
-무엇이 있고 없고 인가 ?
-A ... 속성이 있으먄 객체지향, 없으면 함수형 프로그래밍
+dataset (test.csv, train.csv) 를 모델에 추가했습니다. 
 
-class Calculator:
-    def __init__(self, num1, num2): 
-    # 생성자 함수 ==>인스턴스(객체)만드는 함수 __언더스코어라고함. 2개를 사용. 접근제한 private (내부적으로 사용한다.) 
+titanic 폴더에
+dataset (test.csv, train.csv) 이게 존재하고
+entity  (속성) + service(기능) = 객체(object)
 
-        self.num1 = num1     
-        self.num2 = num2
+def __init__(self, .....) => 속성
+def abc(): => 기능
+결국 class 는 객체를 정의하는 것이다. 
 
-    def sum(self):
-        return self.num1 + self.num2
+class 가 여러개(entity, service) 모여서 다시 큰 개념의 객체를 이뤄요.. 그때 이것은 클래스라 하지 않고
 
-클래스는 저장하는 파일이고, num1, num2 속성값을 갖고있기 때문에
-calc는 객체 
-
-def sum 은 함수고 
-
-결론: 객체지향은 속성이 존재해야 한다. 그리고 속성을 정의하는 곳은 __init__ (속성파라미터 (외부에서 주입되는 값을 파라미터라고 함)) 이다. 
-
-self 는 객체내부의 속성에 접근하는 키워드
-
-객체속성은 은닉화때문에 반드시 self. 로만 접근할 수 있다. 
-이는 보안의 기본처리이다. __init__은 클래스 내부에서만 접근한다. 
-
-클래스 내부에서 메소드의 종류는 몇가지인가 ?
-해석 : 
-기준 : self  입니다. 
-self exist dynamic -> 데이터를 메모리에서 메소드가 유효한 시간동안만 존재, 그 메소드가 소멸된 후 값은 self 에 저장된다 (저장위치가 움직이는 것)
-self !exisst static -> 반 영속적으로 저장됨.(프로젝트가 끝나면 서버 내리면 제거되는 형식)
-dynamic 동적 , static 정적 
-
-(self) 가 있으면 
-
-@어노테이션 붙어있는  걸 static 메서드라고 함. 
+패키지는 같은 컨셉을 공유하는 클래스의 집합.. 모듈 -(진화) => 모델
+모델에 AI 개념이 없으면  web 에서 말하는 모델이고
+AI 개념이 존재하면 인공지능 모델이 됩니다. 
