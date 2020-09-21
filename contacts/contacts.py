@@ -25,7 +25,7 @@ class Contact:
 
     @staticmethod
     def del_contact(clist, name):
-        for i, t in enumerate(clist): # i 는 인덱스, t 는 요소(인스턴ㄴ스)를 뽑는다. 출력한다.
+        for i, t in enumerate(clist): # i 는 인덱스, t 는 요소(인스턴스)를 출력한다.
             if t.name == name:
                 del clist[i]
 

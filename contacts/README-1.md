@@ -49,7 +49,7 @@ self 는 객체내부의 속성에 접근하는 키워드
 해석 : 
 기준 : self  입니다. 
 self exist dynamic -> 데이터를 메모리에서 메소드가 유효한 시간동안만 존재, 그 메소드가 소멸된 후 값은 self 에 저장된다 (저장위치가 움직이는 것)
-self !exisst static -> 반 영속적으로 저장됨.(프로젝트가 끝나면 서버 내리면 제거되는 형식)
+self !exist static -> 반 영속적으로 저장됨.(프로젝트가 끝나면 서버 내리면 제거되는 형식)
 dynamic 동적 , static 정적 
 
 (self) 가 있으면 
