@@ -5,7 +5,8 @@ class Entity:
     # def __init__(self, context, fname, train, test, id, label):
     #     self._context = context # _ 1개 는 default 접근 의미, __ 2개는 private 의미 
     #     self._fname = fname
-    # 의미는 똑같음. 간소화됨. 
+    # 의미는 똑같음.
+    # 3.7부터 간소화되서 dataclass 데코 후, key: value 형식으로 써도 됨 (롬복 형식)
     context: str = '/Users/KAREN/SbaProjects/titanic/data/'
     fname: str = ''
     train: object = None

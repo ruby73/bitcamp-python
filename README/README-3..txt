@@ -53,3 +53,29 @@ class Controller:
     def __init__(self):
         self.entity = Entity()
         self.service = Service()
+
+=================================
+
+페이로드 (컴퓨팅) : 전송되는 데이터
+
+his.fname = payload ~> setter 할당연산자( = ) 있으면 setter
+this.fname 만 있으면 ~> getter 할당연산자( = ) 없으면 getter
+
+=================================
+
+PassengerId,Survived,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked => 메타데이터 = 스키마 = features = property
+1,0,3,"Braund, Mr. Owen Harris",male,22,1,0,A/5 21171,7.25,,S => row, 행, 인스턴스, raw 데이터 
+2,1,1,"Cumings, Mrs. John Bradley (Florence Briggs Thayer)",female,38,1,0,PC 17599,71.2833,C85,C
+
+==================================
+차원 ( dim )
+
+variable   x = 3 스칼라, 0 차원
+array     [] = {1,2,3} 벡터, 1차원이 되고, array 에서 varable 은 element 가 된다. 
+matrix  [[]] = {{1,2,3}, {4,5,6}} 매트릭스, 2차원 data frame, array 라 하지 않고 
+
+===================================
+ 
+지도학습에서 반드시 해야 할 일은 dataset 을 생성하는 것입니다. 
+그 때 dataset 은 반드시 train, test 두가지 형태로 작성합니다. p.149
+

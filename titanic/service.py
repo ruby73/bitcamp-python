@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 '''PassengerId  고객ID,
-Survived 생존여부,
+Survived 생존여부
 Pclass 승선권 1 = 1등석, 2 = 2등석, 3 = 3등석,
 Name,
 Sex,
