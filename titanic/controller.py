@@ -1,5 +1,6 @@
-from service import Service
+
 from entity import Entity
+from service import Service
 '''
 #### PassengerId  고객ID, 이건 문제
 #### Survived 생존여부 -> 머신러닝 모델이 맞춰야 할 답
@@ -14,7 +15,6 @@ Fare 요금,
 #### Cabin 객실번호,
 Embarked 승선한 항구명 C = 쉐브루, Q = 퀸즈타운, S = 사우스햄튼
 '''
-
 
 class Controller:
     def __init__(self):
@@ -41,16 +41,40 @@ class Controller:
         this = service.drop_feature(this, 'Cabin')
         this = service.drop_feature(this, 'Ticket') # 티켓번호 랜덤으로 날리기 때문에 필요 없음. 
         print(f'드롭 후 변수 : {this.train.columns}')
+        this = service.embarked_norminal(this)
+        print(f'승선한 항구 정제결과: {this.train.head()}')
+        this = service.title_norminal(this)
+        print(f'타이틀 정제결과: {this.train.head()}')
+        # name 변수에서 title 을 추출했으니 name 은 필요가 없어졌고, str 이니
+        # 후에 ML-lib 가 이를 인식하는 과정에서 에러를 발생시킬것이다. 
+        this = service.drop_feature(this, 'Name') 
+        this = service.drop_feature(this, 'PassengerId')
+        this = service.age_ordinal(this)
+        print(f'나이 정제결과: {this.train.head()}')
+        this = service.sex_norminal(this)
+        print(f'성별 정제결과: {this.train.head()}')
+        this = service.drop_feature(this, 'Fare')
+        print(f'전체 정제결과: {this.train.head()}')
+        print(f'train na 체크 : {this.train.isnull().sum()}')
+        print(f'test na 체크 : {this.test.isnull().sum()}')
+        print(f'train 정제결과: {this.tr}')
         return this
 
 
-    def learning(self):
-        pass
+    def learning(self, train, test): # evaluation과 합친다.
+        service = self.service
+        this = self.modeling(train, test)
+        print('&&&&&&&&&&&&&&&&& Learning 결과  &&&&&&&&&&&&&&&&')
+        print(f'결정트리 검증결과: {service.accuracy_by_dtree(this)}')
+        print(f'랜덤포리 검증결과: {service.accuracy_by_rforest(this)}')
+        print(f'나이브베이즈 검증결과: {service.accuracy_by_nb(this)}')
+        print(f'KNN 검증결과: {service.accuracy_by_knn(this)}')
+        print(f'SVM 검증결과: {service.accuracy_by_svm(this)}')
 
-    def submit(self): # machine 이 된다. 이 단계에서는 캐글에게 내 머신이를 보내서 평가 받게 하는 단계입니다. 마치 수능장에 자식보낸 부모의 마음..
-        pass
+    def submit(self): # machine 이 된다. 파일로 저장 
+        pass 
+
 
 if __name__ == '__main__':
     ctrl = Controller()
-    ctrl.modeling('train.csv', 'test.csv')
-
+    ctrl.learning('train.csv','test.csv')
