@@ -1,3 +1,4 @@
+"""
 Data Dictionary ===> variable = feature = parameter = axis 
 Variable	Definition	Key
 0. survival	Survival	0 = No, 1 = Yes
@@ -29,3 +30,4 @@ Parent = mother, father
 Child = daughter, son, stepdaughter, stepson
 Some children travelled only with a nanny, therefore parch=0 for them.
 
+"""

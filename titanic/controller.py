@@ -1,6 +1,9 @@
 
 from entity import Entity
 from service import Service
+import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier # rforest
 '''
 #### PassengerId  고객ID, 이건 문제
 #### Survived 생존여부 -> 머신러닝 모델이 맞춰야 할 답
@@ -20,48 +23,55 @@ class Controller:
     def __init__(self):
         self.entity = Entity()
         self.service = Service()
-        print('hello')
 
     def modeling(self, train, test):
         service = self.service
         this = self.preprocessing(train, test)
-
         this.label = service.create_label(this)
         this.train = service.create_train(this)
-        
+        print(f'>> Train 변수 : {this.train.columns}')
+        print(f'>> Test 변수 : {this.train.columns}')
         return this
 
-    def preprocessing(self, train, test) -> object:
+    def preprocessing(self, train, test):
         service = self.service
         this = self.entity
-        this.train = service.new_model(train)  # payload
+        this.train = service.new_model(train) # payload
         this.test = service.new_model(test) # payload
-        this.id = this.test['PassengerId'] # machine(인스턴스 객체) 이에게는 이것이 qeustion 이 됩니다. 이 id는 
-        print(f'드롭 전 변수 : {this.train.columns}')
+        this.id = this.test['PassengerId'] # machine 이에게는 이것이 question 이 됩니다. 
+        print(f'정제 전 Train 변수 : {this.train.columns}')
+        print(f'정제 전 Test 변수 : {this.test.columns}')
         this = service.drop_feature(this, 'Cabin')
-        this = service.drop_feature(this, 'Ticket') # 티켓번호 랜덤으로 날리기 때문에 필요 없음. 
+        this = service.drop_feature(this, 'Ticket')
         print(f'드롭 후 변수 : {this.train.columns}')
         this = service.embarked_norminal(this)
         print(f'승선한 항구 정제결과: {this.train.head()}')
         this = service.title_norminal(this)
         print(f'타이틀 정제결과: {this.train.head()}')
-        # name 변수에서 title 을 추출했으니 name 은 필요가 없어졌고, str 이니
-        # 후에 ML-lib 가 이를 인식하는 과정에서 에러를 발생시킬것이다. 
-        this = service.drop_feature(this, 'Name') 
+        # name 변수에서 title 을 추출했으니 name 은 필요가 없어졌고, str 이니 
+        # 후에 ML-lib 가 이를 인식하는 과정에서 에러를 발생시킬것이다.
+        this = service.drop_feature(this, 'Name')
         this = service.drop_feature(this, 'PassengerId')
         this = service.age_ordinal(this)
         print(f'나이 정제결과: {this.train.head()}')
+        this = service.drop_feature(this, 'SibSp')
         this = service.sex_norminal(this)
         print(f'성별 정제결과: {this.train.head()}')
+        this = service.fareBand_nominal(this)
+        print(f'요금 정제결과: {this.train.head()}')
         this = service.drop_feature(this, 'Fare')
-        print(f'전체 정제결과: {this.train.head()}')
-        print(f'train na 체크 : {this.train.isnull().sum()}')
-        print(f'test na 체크 : {this.test.isnull().sum()}')
-        print(f'train 정제결과: {this.tr}')
+        print(f'#########  TRAIN 정제결과 ###############')
+        print(f'{this.train.head()}')
+        print(f'#########  TEST 정제결과 ###############')
+        print(f'{this.test.head()}')
+        print(f'######## train na 체크 ##########')
+        print(f'{this.train.isnull().sum()}')
+        print(f'######## test na 체크 ##########')
+        print(f'{this.test.isnull().sum()}')
         return this
+        
 
-
-    def learning(self, train, test): # evaluation과 합친다.
+    def learning(self, train, test):
         service = self.service
         this = self.modeling(train, test)
         print('&&&&&&&&&&&&&&&&& Learning 결과  &&&&&&&&&&&&&&&&')
@@ -71,10 +81,15 @@ class Controller:
         print(f'KNN 검증결과: {service.accuracy_by_knn(this)}')
         print(f'SVM 검증결과: {service.accuracy_by_svm(this)}')
 
-    def submit(self): # machine 이 된다. 파일로 저장 
-        pass 
-
+    def submit(self, train, test): # machine 이 된다. 이 단계는 캐글에게 내 머신이를 보내서 평가받게 하는 것 입니다. 마치 수능장에 자식보낸 부모님 마음 ...
+        this = self.modeling(train, test)
+        clf = RandomForestClassifier()
+        clf.fit(this.train, this.label)
+        prediction = clf.predict(this.test)
+        pd.DataFrame(
+            {'PassengerId' : this.id, 'Survived' : prediction}
+        ).to_csv(this.context+'submission.csv', index=False)
 
 if __name__ == '__main__':
     ctrl = Controller()
-    ctrl.learning('train.csv','test.csv')
+    ctrl.submit('train.csv','test.csv')

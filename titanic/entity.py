@@ -2,8 +2,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Entity:
-    # 현재는 이렇게 바뀜. 
-    # 3.7부터 간소화되서 dataclass 데코 후, key: value 형식으로 써도 됨 (롬복 형식)
+
     context: str = '/Users/KAREN/SbaProjects/titanic/data/'
     fname: str = ''
     train: object = None
@@ -11,6 +10,9 @@ class Entity:
     id: str = ''
     label: str = ''
 
+
+    # 현재는 이렇게 바뀜. 
+    # 3.7부터 간소화되서 dataclass 데코 후, key: value 형식으로 써도 됨 (롬복 형식)
   
 
 # 생존여부를 판단 할 수 있는 속성값은? 
