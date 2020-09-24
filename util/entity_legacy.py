@@ -69,4 +69,6 @@ class Entity:
     def label(self, label):
         self._label = label
     
-    # 롬복을 쓰기 전에 상황임. 
+    # 롬복 쓰기 전에 상황임. 
+    # 옛날꺼.
+

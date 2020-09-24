@@ -1,4 +1,8 @@
-from entity import Entity
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+from util.file_handler import FileReader
+from sklearn.ensemble import RandomForestClassifier # rforest
 import pandas as pd
 import numpy as np
 # sklearn algorithm : classification, regression, clustring, reduction
@@ -12,29 +16,30 @@ from sklearn.model_selection import KFold  # k값은 count 로 의미로 이해
 from sklearn.model_selection import cross_val_score
 # dtree, rforest, nb, knn, svm,  
 
+
 """
-#### PassengerId  고객ID,
-#### Survived 생존여부,  --> 머신러닝 모델이 맞춰야 할 답 
+PassengerId  고객ID,
+Survived 생존여부,  --> 머신러닝 모델이 맞춰야 할 답 
 Pclass 승선권 1 = 1등석, 2 = 2등석, 3 = 3등석,
 Name,
 Sex,
 Age,
 SibSp 동반한 형제, 자매, 배우자,
 Parch 동반한 부모, 자식,
-#### Ticket 티켓번호,
+Ticket 티켓번호,
 Fare 요금,
-#### Cabin 객실번호,
+Cabin 객실번호,
 Embarked 승선한 항구명 C = 쉐브루, Q = 퀸즈타운, S = 사우스햄튼
 """
-
 class Service:
     def __init__(self):
-        self.entity = Entity()  
+        self.fileReader = FileReader()  
         pass
 
     
     def new_model(self, payload) -> object:
-        this = self.entity
+        this = self.fileReader
+        this.context = '/Users/KAREN/SbaProjects/kaggle/data/'
         this.fname = payload
         return pd.read_csv(this.context + this.fname) # p.139  df = tensor
 
@@ -51,6 +56,7 @@ class Service:
         this.train = this.train.drop([feature], axis = 1)
         this.test = this.test.drop([feature], axis = 1) # p.149 에 보면 훈련, 테스트 세트로 나눈다
         return this
+
 
     @staticmethod
     def pclass_ordinal(this) -> object:
@@ -73,13 +79,13 @@ class Service:
         test = this.test 
         train['Age'] = train['Age'].fillna(-0.5)
         test['Age'] = test['Age'].fillna(-0.5)
-        # age 를 평균으로 넣기도 애매하고, 다수결로 넣기도 너무 근거가 없다...
-        # 특히 age 는 생존률 판단에서 가중치(weigth)가 상당하므로 디테일한 접근이 필요합니다.
-        # 나이를 모르는 승객은 모르는 상태로 처리해야 값의 왜곡을 줄일수 있어서 
-        # -0.5 라는 중간값으로 처리했습니다.
+         # age 를 평균으로 넣기도 애매하고, 다수결로 넣기도 너무 근거가 없다...
+         # 특히 age 는 생존률 판단에서 가중치(weigth)가 상당하므로 디테일한 접근이 필요합니다.
+         # 나이를 모르는 승객은 모르는 상태로 처리해야 값의 왜곡을 줄일수 있어서 
+         # -0.5 라는 중간값으로 처리했습니다.
         bins = [-1, 0, 5, 12, 18, 24, 35, 60, np.inf] # 이 파트는 범위를 뜻합니다.
-        # -1 이상 0 미만....60이상 기타 ...
-        # [] 에 있으니 이것은 변수명이겠군요..라고 판단하셨으면 잘 이해한 겁니다.
+         # -1 이상 0 미만....60이상 기타 ...
+         # [] 에 있으니 이것은 변수명이겠군요..라고 판단하셨으면 잘 이해한 겁니다.
         labels = ['Unknown', 'Baby', 'Child', 'Teenager','Student','Young Adult', 'Adult', 'Senior']
         # [] 은 변수명으로 선언되었음
         train['AgeGroup'] = pd.cut(train['Age'], bins, labels=labels)
@@ -130,6 +136,7 @@ class Service:
         this.train['FareBand'] = pd.qcut(this['Fare'], 4, labels={1,2,3,4})
         this.test['FareBand'] = pd.qcut(this['Fare'], 4, labels={1,2,3,4})
         return this
+
 
     @staticmethod
     def fareBand_nominal(this) -> object:  # 요금이 다양하니 클러스터링을 하기위한 준비
@@ -197,7 +204,80 @@ class Service:
         score = cross_val_score(svm, this.train, this.label, cv=Service.create_k_fold(), n_jobs=1, scoring='accuracy')
         return round(np.mean(score) * 100, 2)
 
+class Controller:
+    def __init__(self):
+        self.fileReader = FileReader()
+        self.service = Service()
 
- 
+    def modeling(self, train, test):
+        service = self.service
+        this = self.preprocessing(train, test)
+        this.label = service.create_label(this)
+        this.train = service.create_train(this)
+        print(f'>> Train 변수 : {this.train.columns}')
+        print(f'>> Test 변수 : {this.train.columns}')
+        return this
+
+    def preprocessing(self, train, test):
+        service = self.service
+        this = self.fileReader
+        this.train = service.new_model(train) # payload
+        this.test = service.new_model(test) # payload
+        this.id = this.test['PassengerId'] # machine 이에게는 이것이 question 이 됩니다. 
+        print(f'정제 전 Train 변수 : {this.train.columns}')
+        print(f'정제 전 Test 변수 : {this.test.columns}')
+        this = service.drop_feature(this, 'Cabin')
+        this = service.drop_feature(this, 'Ticket')
+        print(f'드롭 후 변수 : {this.train.columns}')
+        this = service.embarked_norminal(this)
+        print(f'승선한 항구 정제결과: {this.train.head()}')
+        this = service.title_norminal(this)
+        print(f'타이틀 정제결과: {this.train.head()}')
+        # name 변수에서 title 을 추출했으니 name 은 필요가 없어졌고, str 이니 
+        # 후에 ML-lib 가 이를 인식하는 과정에서 에러를 발생시킬것이다.
+        this = service.drop_feature(this, 'Name')
+        this = service.drop_feature(this, 'PassengerId')
+        this = service.age_ordinal(this)
+        print(f'나이 정제결과: {this.train.head()}')
+        this = service.drop_feature(this, 'SibSp')
+        this = service.sex_norminal(this)
+        print(f'성별 정제결과: {this.train.head()}')
+        this = service.fareBand_nominal(this)
+        print(f'요금 정제결과: {this.train.head()}')
+        this = service.drop_feature(this, 'Fare')
+        print(f'#########  TRAIN 정제결과 ###############')
+        print(f'{this.train.head()}')
+        print(f'#########  TEST 정제결과 ###############')
+        print(f'{this.test.head()}')
+        print(f'######## train na 체크 ##########')
+        print(f'{this.train.isnull().sum()}')
+        print(f'######## test na 체크 ##########')
+        print(f'{this.test.isnull().sum()}')
+        return this
+        
+
+    def learning(self, train, test):
+        service = self.service
+        this = self.modeling(train, test)
+        print('&&&&&&&&&&&&&&&&& Learning 결과  &&&&&&&&&&&&&&&&')
+        print(f'결정트리 검증결과: {service.accuracy_by_dtree(this)}')
+        print(f'랜덤포리 검증결과: {service.accuracy_by_rforest(this)}')
+        print(f'나이브베이즈 검증결과: {service.accuracy_by_nb(this)}')
+        print(f'KNN 검증결과: {service.accuracy_by_knn(this)}')
+        print(f'SVM 검증결과: {service.accuracy_by_svm(this)}')
+
+    def submit(self, train, test): # machine 이 된다. 이 단계는 캐글에게 내 머신이를 보내서 평가받게 하는 것 입니다. 마치 수능장에 자식보낸 부모님 마음 ...
+        this = self.modeling(train, test)
+        clf = RandomForestClassifier()
+        clf.fit(this.train, this.label)
+        prediction = clf.predict(this.test)
+        pd.DataFrame(
+            {'PassengerId' : this.id, 'Survived' : prediction}
+        ).to_csv('Users/KAREN/SbaProjects/kaggle/data'+'submission.csv', index=False)
+
+
+
+if __name__ == '__main__':
+    ctrl = Controller()
+    ctrl.submit('train.csv','test.csv')
     
-
