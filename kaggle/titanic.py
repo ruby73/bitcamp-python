@@ -273,8 +273,7 @@ class Controller:
         prediction = clf.predict(this.test)
         pd.DataFrame(
             {'PassengerId' : this.id, 'Survived' : prediction}
-        ).to_csv('Users/KAREN/SbaProjects/kaggle/data'+'submission.csv', index=False)
-
+        ).to_csv('/Users/KAREN/SbaProjects/kaggle/data'+'submission.csv', index=False)
 
 
 if __name__ == '__main__':
