@@ -12,3 +12,4 @@ class FileReader:
     test: object = None
     id: str = ''
     label: str = ''
+ 
