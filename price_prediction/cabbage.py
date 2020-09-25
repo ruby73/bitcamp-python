@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 from dataclasses import dataclass
+
 @dataclass
 class Cabbage:
 
@@ -22,7 +23,6 @@ class Cabbage:
     def __init__(self):
         self.fileReader = FileReader() # 얘 안바뀌죠.. 기능은 뭐다 -> 상수로 처리한다
         self.context =  '/Users/KAREN/SbaProjects/price_prediction/data/'
-
 
     def new_model(self, payload) -> object:
         this = self.fileReader
@@ -98,9 +98,9 @@ class Cabbage:
 
 
 if __name__ == '__main__':
-    cabbage= Cabbage()
-    # dframe = m.new_model('price_data.csv')
-    # print(dframe.head())
-    # m.create_tf(dframe)
+    m= Cabbage()
+    dframe = m.new_model('price_data.csv')
+    print(dframe.head())
+    m.create_tf(dframe)
     print(cabbage.test())
     
