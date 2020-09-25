@@ -97,7 +97,7 @@ class StudentDao:
         select * from  students where id like ? and pwd like ?
         """
         cursor.execute(sql, (id, pwd))
-        print(f'로그인 성공 이름: {cursor.fetchone()[0]}')
+        print(f’로그인 성공 이름: {cursor.fetchone()[0]}’
         temp = cursor.fetchone()
     
         
