@@ -1,10 +1,11 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+
 from util.file_handler import FileReader
-from sklearn.ensemble import RandomForestClassifier # rforest
 import pandas as pd
 import numpy as np
+from config import basedir
 # sklearn algorithm : classification, regression, clustring, reduction
 from sklearn.tree import DecisionTreeClassifier # dtree
 from sklearn.ensemble import RandomForestClassifier # rforest
@@ -34,14 +35,15 @@ Embarked 승선한 항구명 C = 쉐브루, Q = 퀸즈타운, S = 사우스햄�
 class Service:
     def __init__(self):
         self.fileReader = FileReader()  
-        pass
+        self.kaggle = os.path.join(basedir, 'kaggle')
+        self.data =  os.path.join(self.kaggle, 'data')
 
     
     def new_model(self, payload) -> object:
         this = self.fileReader
-        this.context = '/Users/KAREN/SbaProjects/kaggle/data/'
+        this.data = self.data
         this.fname = payload
-        return pd.read_csv(this.context + this.fname) # p.139  df = tensor
+        return pd.read_csv(os.path.join(self.data, this.fname)) # p.139  df = tensor
 
     @staticmethod
     def create_train(this) -> object:
@@ -206,7 +208,9 @@ class Service:
 
 class Controller:
     def __init__(self):
-        self.fileReader = FileReader()
+        self.fileReader = FileReader()  
+        self.kaggle = os.path.join(basedir, 'kaggle')
+        self.data =  os.path.join(self.kaggle, 'data')
         self.service = Service()
 
     def modeling(self, train, test):
@@ -273,10 +277,11 @@ class Controller:
         prediction = clf.predict(this.test)
         pd.DataFrame(
             {'PassengerId' : this.id, 'Survived' : prediction}
-        ).to_csv('/Users/KAREN/SbaProjects/kaggle/data'+'submission.csv', index=False)
+        ).to_csv(os.path.join(self.data, 'submission.csv'), index=False)
 
 
 if __name__ == '__main__':
+    print(f'########### {basedir} ############')
     ctrl = Controller()
     ctrl.submit('train.csv','test.csv')
     
